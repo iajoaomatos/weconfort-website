@@ -1,4 +1,4 @@
-# WeConfort® - Solução Tecnológica de Alívio da Dor e Inflamação em Cães e Gatos
+# WeConfort® - Solução Tecnológica Suplementar para Alívio da Dor e Inflamação em Cães e Gatos
 
 Este NÃO É o website oficial do **WeConfort®**, um suplemento alimentar de alta sinergia desenvolvido pela **Wepharm®** focado no suporte clínico e controlo de processos de dor e inflamatórios crónicos em cães e gatos, especialmente em idade geriátrica.
 
