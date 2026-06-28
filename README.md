@@ -1,6 +1,6 @@
-# WeConfort® - Biotecnologia Canina & Felina (Website Estático)
+# WeConfort® - Solução Tecnológica de Alívio da Dor e Inflamação em Cães e Gatos
 
-Este NÃO É o website oficial do **WeConfort®**, um suplemento alimentar de alta sinergia desenvolvido pela **Wepharm®** focado no suporte clínico e controlo de processos crónicos de cães e gatos, especialmente em idade geriátrica.
+Este NÃO É o website oficial do **WeConfort®**, um suplemento alimentar de alta sinergia desenvolvido pela **Wepharm®** focado no suporte clínico e controlo de processos de dor e inflamatórios crónicos em cães e gatos, especialmente em idade geriátrica.
 
 O projeto foi construído para apresentar alta performance visual, micro-interações fluidas e efeitos de profundidade inovadores (Glassmorphic 3D Depth Card) utilizando técnicas de prompt engineering para web design.
 
@@ -46,4 +46,4 @@ Como o website utiliza recursos de carregamento assíncrono (ScrollTrigger de v�
 
 ## ⚠️ Aviso Académico / Disclaimer
 
-Este website foi desenvolvido para fins estritamente académicos, de estudo e de prática profissional de Web Design e Front-End. Todos os links internos e botões de compra encontram-se inativos (nenhum link ou processo de compra está disponível). O WeConfort® é um produto veterinário da Wepharm®, e este website não possui qualquer ligação oficial, patrocínio ou fins lucrativos associados à referida marca.
+Este website (estático) é uma interpretação conceptual e foi desenvolvido para fins estritamente académicos, de estudo e de prática profissional de Web Design e Front-End. Todos os links internos e botões de compra encontram-se inativos (nenhum link ou processo de compra está disponível). O WeConfort® é um produto veterinário da Wepharm®, e este website não possui qualquer ligação oficial, patrocínio ou fins lucrativos associados à referida marca.
