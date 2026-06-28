@@ -48,3 +48,9 @@ O website está pronto para deploy imediato em qualquer plataforma de alojamento
 * **Vercel**
 * **Netlify**
 * **GitHub Pages** (basta apontar a branch principal e ativar o alojamento de páginas).
+
+---
+
+## ⚠️ Aviso Académico / Disclaimer
+
+Este website foi desenvolvido para fins estritamente académicos, de estudo e de prática profissional de Web Design e Front-End. Todos os links internos e botões de compra encontram-se inativos (nenhum link ou processo de compra está disponível). O WeConfort® é um produto veterinário da Wepharm®, e este website não possui qualquer ligação oficial, patrocínio ou fins lucrativos associados à referida marca.
