@@ -1,8 +1,8 @@
 # WeConfort® - Biotecnologia Canina & Felina (Website Estático)
 
-Este é o website oficial do **WeConfort®**, um suplemento alimentar de alta sinergia desenvolvido pela **Wepharm®** focado no suporte clínico e controlo de processos crónicos de cães e gatos, especialmente em idade geriátrica.
+Este NÃO É o website oficial do **WeConfort®**, um suplemento alimentar de alta sinergia desenvolvido pela **Wepharm®** focado no suporte clínico e controlo de processos crónicos de cães e gatos, especialmente em idade geriátrica.
 
-O projeto foi construído para apresentar alta performance visual, micro-interações fluidas e efeitos de profundidade inovadores (Glassmorphic 3D Depth Card).
+O projeto foi construído para apresentar alta performance visual, micro-interações fluidas e efeitos de profundidade inovadores (Glassmorphic 3D Depth Card) utilizando técnicas de prompt engineering para web design.
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -30,9 +30,9 @@ O projeto foi construído para apresentar alta performance visual, micro-intera�
 2. **Glassmorphic 3D Depth Card**:
    Card 3D simulando profundidade física ao mexer o rato (efeito tilt interativo com lanterna radial dinâmica).
 3. **Banda de Logotipos Infinita (Marquee)**:
-   Carrossel infinito e suave de produtos integrados na We Series da Wepharm.
+   Carrossel infinito e suave de produtos integrados da Wepharm.
 4. **Design System Integrado**:
-   Totalmente fiel ao guia visual da marca com as cores institucionais (Magenta, Teal, Clinical Dark/White).
+   Totalmente fiel ao Design System criado academicamente e tentando seguir as cores institucionais (Magenta, Teal, Clinical Dark/White).
 
 ## 🌍 Como Executar Localmente
 
@@ -41,13 +41,6 @@ Como o website utiliza recursos de carregamento assíncrono (ScrollTrigger de v�
 1. Clone o repositório.
 2. Inicie o seu servidor local na raiz do projeto.
 3. Aceda a `http://localhost:<porta>` no seu navegador.
-
-## 🛠️ Deploy em Produção
-
-O website está pronto para deploy imediato em qualquer plataforma de alojamento estático, tais como:
-* **Vercel**
-* **Netlify**
-* **GitHub Pages** (basta apontar a branch principal e ativar o alojamento de páginas).
 
 ---
 

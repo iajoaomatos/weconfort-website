@@ -5,7 +5,7 @@ desktop.ini
 
 # IDEs and editors
 .idea/
-.vscode/
+.antigravity/
 *.suo
 *.ntvs*
 *.njsproj
