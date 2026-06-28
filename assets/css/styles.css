@@ -1,0 +1,491 @@
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    /* Fundo branco e texto escuro para contraste exigido */
+    background-color: #FFFFFF;
+    color: #212529;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+/* -------------------------------------
+   Video Background Controls
+------------------------------------- */
+.video-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #FFF;
+}
+
+#hero-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Máscara em degradê branco bilateral para garantir contraste total nas laterais */
+.video-gradient-mask {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 1) 0%,
+            rgba(255, 255, 255, 0.85) 25%,
+            rgba(255, 255, 255, 0.2) 50%,
+            rgba(255, 255, 255, 0.85) 75%,
+            rgba(255, 255, 255, 1) 100%);
+    z-index: 1;
+}
+
+/* -------------------------------------
+   Text Reveal Animations (Blur-in)
+------------------------------------- */
+.reveal-up {
+    opacity: 0;
+    transform: translateY(30px);
+    filter: blur(15px);
+    will-change: transform, opacity, filter;
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 1.2s ease,
+        filter 1.2s ease;
+    display: inline-block;
+    /* Necessário para aplicar transformações na mesma linha/bloco */
+}
+
+.reveal-active {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+}
+
+/* Delays utilitários */
+.delay-100 {
+    transition-delay: 0.1s;
+}
+
+.delay-200 {
+    transition-delay: 0.2s;
+}
+
+.delay-300 {
+    transition-delay: 0.3s;
+}
+
+.delay-400 {
+    transition-delay: 0.4s;
+}
+
+.delay-500 {
+    transition-delay: 0.5s;
+}
+
+/* -------------------------------------
+   Botões & Componentes (do Design System)
+------------------------------------- */
+.btn-shine {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-shine::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transform: skewX(-20deg);
+}
+
+.btn-shine:hover::after {
+    left: 150%;
+    transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-outline-anim {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    transition: color 0.4s ease;
+    border-color: rgba(33, 37, 41, 0.2);
+    /* Borda escura suave */
+}
+
+.btn-outline-anim::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    background-color: #11A397;
+    /* Brand Teal */
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: -1;
+}
+
+.btn-outline-anim:hover {
+    border-color: #11A397;
+    color: #FFFFFF;
+}
+
+.btn-outline-anim:hover::before {
+    height: 100%;
+}
+
+/* -------------------------------------
+   Scroll & Layout
+------------------------------------- */
+/* Container de scroll longo para o pinning da Hero */
+#hero-pin-container {
+    position: relative;
+    height: 400vh;
+    /* Espaço para os 14 segundos de vídeo no scroll */
+    z-index: 10;
+}
+
+/* O painel que fica fixo no viewport */
+#hero-panel {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    background-color: #FFFFFF;
+}
+
+/* -------------------------------------
+   Section 2 - Depth Simulation & Benefits
+------------------------------------- */
+.depth-section {
+    position: relative;
+    z-index: 20;
+    background-color: #FFFFFF;
+    border-top: 1px solid #E9ECEF;
+    background-image:
+        radial-gradient(at 0% 100%, rgba(187, 48, 135, 0.03) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(17, 163, 151, 0.03) 0px, transparent 50%);
+}
+
+.parallax-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1500px;
+}
+
+.parallax-card-container {
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    height: 560px;
+    transform-style: preserve-3d;
+    cursor: pointer;
+}
+
+/* Card Traseiro (Chassis) */
+.chassis-card {
+    position: absolute;
+    inset: -12px;
+    background: rgba(33, 37, 41, 0.02);
+    border: 1px solid rgba(33, 37, 41, 0.05);
+    border-radius: 24px;
+    backdrop-filter: blur(8px);
+    pointer-events: none;
+    transform: translateZ(-40px);
+    transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Card Principal */
+.glass-card-3d {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(33, 37, 41, 0.06);
+    transform-style: preserve-3d;
+    transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 28px;
+    z-index: 10;
+}
+
+.glass-card-3d:hover {
+    box-shadow: 0 35px 60px -10px rgba(17, 163, 151, 0.12);
+}
+
+/* Efeito de Reflexo de Luz / Lanterna */
+.glass-card-3d::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+            rgba(255, 255, 255, 0.55),
+            transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.glass-card-3d:hover::before {
+    opacity: 1;
+}
+
+/* Glow colorido de fundo que segue o rato */
+.card-bg-glow {
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(17, 163, 151, 0.12) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    transform: translate3d(var(--glow-x, -50%), var(--glow-y, -50%), -50px);
+    transition: transform 0.25s cubic-bezier(0.1, 0.8, 0.25, 1);
+}
+
+/* Elementos com profundidade 3D */
+.depth-element-far {
+    transform: translateZ(60px);
+}
+
+.depth-element-mid {
+    transform: translateZ(30px);
+}
+
+/* Linha brilhante (Gauge) */
+.glow-line-container {
+    width: 100%;
+    height: 4px;
+    background: rgba(33, 37, 41, 0.08);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+}
+
+.glow-line-fill {
+    height: 100%;
+    width: 75%;
+    background: linear-gradient(90deg, #11A397, #BB3087);
+    border-radius: 2px;
+    position: relative;
+    box-shadow: 0 0 10px rgba(17, 163, 151, 0.4);
+}
+
+.glow-line-fill::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    background: #FFFFFF;
+    border: 2px solid #11A397;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #11A397;
+}
+
+@keyframes scrollDot {
+    0% {
+        transform: translateY(-100%);
+    }
+
+    100% {
+        transform: translateY(200%);
+    }
+}
+
+/* -------------------------------------
+   Section 3 - Science Video Showcase & Glass Box
+------------------------------------- */
+#science-video-section {
+    position: relative;
+    z-index: 20;
+    background-color: #FFFFFF;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-top: 1px solid #E9ECEF;
+    border-bottom: 1px solid #E9ECEF;
+    padding: 90px 24px;
+    perspective: 1500px;
+    /* Habilita profundidade 3D realista nos hovers */
+}
+
+.section-video-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0.65;
+    /* Revertido de 0.45 para melhor contraste do vídeo */
+}
+
+.science-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(248, 249, 250, 0.85) 50%, rgba(255, 255, 255, 0.7) 100%);
+    /* Revertido para valores originais */
+    z-index: 1;
+}
+
+.glass-glow-box {
+    position: relative;
+    background: rgba(255, 255, 255, 0.4);
+    /* Primary Glass Panel do Design System */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    /* Borda Glass do Design System */
+    border-radius: 24px;
+    padding: 44px;
+    box-shadow: 0 25px 50px -12px rgba(33, 37, 41, 0.05);
+    overflow: hidden;
+    max-width: 680px;
+    /* Largura reduzida para melhor visualização do vídeo */
+    width: 100%;
+    z-index: 10;
+    transform-style: preserve-3d;
+    will-change: transform;
+    transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.glass-glow-box::before {
+    content: "";
+    position: absolute;
+    inset: 0px;
+    background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+            rgba(17, 163, 151, 0.12),
+            transparent 45%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.glass-glow-box:hover::before {
+    opacity: 1;
+}
+
+.glass-glow-box:hover {
+    border-color: rgba(17, 163, 151, 0.3);
+    box-shadow: 0 35px 60px -15px rgba(17, 163, 151, 0.08);
+}
+
+.pulsing-glow-back {
+    position: absolute;
+    width: 550px;
+    height: 550px;
+    background: radial-gradient(circle, rgba(17, 163, 151, 0.05) 0%, transparent 70%);
+    filter: blur(60px);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    animation: floatGlow 12s ease-in-out infinite alternate;
+}
+
+@keyframes floatGlow {
+    0% {
+        transform: translate(-40px, -40px) scale(0.9);
+    }
+
+    100% {
+        transform: translate(40px, 40px) scale(1.1);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes shimmer {
+    from {
+        transform: translateX(-100%) skewX(-15deg);
+    }
+
+    to {
+        transform: translateX(200%) skewX(-15deg);
+    }
+}
+
+/* -------------------------------------
+   Seção de Banda Animada (Marquee)
+------------------------------------- */
+.marquee-band {
+    background-color: #E9ECEF;
+    /* Cor bg-grey do Design System */
+    border-top: 1px solid #DEE2E6;
+    border-bottom: 1px solid #DEE2E6;
+    overflow: hidden;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    padding: 22px 0;
+    width: 100%;
+    position: relative;
+    z-index: 25;
+    user-select: none;
+}
+
+.marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee-loop 38s linear infinite;
+}
+
+.marquee-track:hover {
+    animation-play-state: paused;
+}
+
+.marquee-group {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    padding-right: 60px;
+}
+
+@keyframes marquee-loop {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
