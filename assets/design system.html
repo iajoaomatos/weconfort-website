@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Biotech Design System</title>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Fira Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            magenta: '#BB3087',
+                            teal: '#11A397'
+                        },
+                        product: {
+                            red: '#C66772',
+                            green: '#257962'
+                        },
+                        clinical: {
+                            white: '#FFFFFF',
+                            offwhite: '#F8F9FA',
+                            light: '#EAEAE5',
+                            grey: '#E9ECEF',
+                            dark: '#212529',
+                            slate: '#1e293b'
+                        }
+                    },
+                    animation: {
+                        'spin-slow': 'spin 3s linear infinite',
+                        'marquee': 'marquee 30s linear infinite',
+                        'shimmer': 'shimmer 1.5s infinite',
+                    },
+                    keyframes: {
+                        marquee: {
+                            '0%': { transform: 'translateX(0)' },
+                            '100%': { transform: 'translateX(-50%)' }
+                        },
+                        shimmer: {
+                            'from': { transform: 'translateX(-100%) skewX(-15deg)' },
+                            'to': { transform: 'translateX(200%) skewX(-15deg)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #EAEAE5;
+            color: #212529;
+            overflow-x: hidden;
+            /* Subtle Background Animation */
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(187, 48, 135, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(17, 163, 151, 0.05) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        /* -------------------------------------
+           Text Reveal Animations
+        ------------------------------------- */
+        .text-reveal-wrapper {
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: bottom;
+        }
+
+        .text-reveal-content {
+            transform: translateY(110%);
+            opacity: 0;
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.2s ease;
+            display: block;
+        }
+
+        .reveal-active .text-reveal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .delay-100 { transition-delay: 0.1s; }
+        .delay-200 { transition-delay: 0.2s; }
+        .delay-300 { transition-delay: 0.3s; }
+        .delay-500 { transition-delay: 0.5s; }
+
+        /* -------------------------------------
+           Scroll Reveal
+        ------------------------------------- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* -------------------------------------
+           Button Animations
+        ------------------------------------- */
+        .btn-shine {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-shine::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.5), transparent);
+            transform: skewX(-20deg);
+        }
+        .btn-shine:hover::after {
+            left: 150%;
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-outline-anim {
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            transition: color 0.4s ease;
+        }
+        .btn-outline-anim::before {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0%;
+            background-color: #BB3087;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: -1;
+        }
+        .btn-outline-anim:hover::before {
+            height: 100%;
+        }
+
+        /* -------------------------------------
+           Flashlight Effect Card
+        ------------------------------------- */
+        .flashlight-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            overflow: hidden;
+        }
+        .flashlight-card::before {
+            content: "";
+            position: absolute;
+            inset: 0px;
+            background: radial-gradient(
+                600px circle at var(--mouse-x) var(--mouse-y),
+                rgba(255, 255, 255, 0.6),
+                transparent 40%
+            );
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .flashlight-card:hover::before { opacity: 1; }
+
+        /* -------------------------------------
+           Marquee
+        ------------------------------------- */
+        .marquee-container {
+            display: flex;
+            overflow: hidden;
+            user-select: none;
+        }
+        .marquee-content {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-around;
+            min-width: 100%;
+            animation: marquee 30s linear infinite;
+        }
+
+        /* -------------------------------------
+           Nav Load
+        ------------------------------------- */
+        .nav-load {
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.8s ease-out;
+        }
+        .nav-load.loaded {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Utility */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #BB3087, #11A397);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Checkbox Animation */
+        input[type="checkbox"]:checked ~ .checkbox-box {
+            background-color: #11A397;
+            border-color: #11A397;
+        }
+        input[type="checkbox"]:checked ~ .checkbox-box svg {
+            transform: scale(1);
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body class="antialiased min-h-screen selection:bg-brand-teal selection:text-white pb-10">
+    
+    <!-- Main Container Grid Guides -->
+    <div class="max-w-[1400px] mx-auto border-x border-clinical-grey/60 relative bg-clinical-light/40 shadow-2xl shadow-brand-teal/5">
+        
+        <div class="absolute inset-0 pointer-events-none grid grid-cols-1 md:grid-cols-12 gap-0 z-0 h-full w-full">
+            <div class="hidden md:block md:col-span-3 border-r border-clinical-grey/30 h-full"></div>
+            <div class="hidden md:block md:col-span-6 border-r border-clinical-grey/30 h-full"></div>
+            <div class="hidden md:block md:col-span-3 h-full"></div>
+        </div>
+
+        <!-- Sticky Header -->
+        <header class="sticky top-0 z-[60] border-b border-clinical-grey/60 bg-clinical-light/80 backdrop-blur-xl nav-load">
+            <div class="flex justify-between items-center px-4 md:px-8 py-5">
+                <div class="flex items-center gap-6 z-10">
+                    <a class="text-xs font-semibold tracking-widest uppercase hover:text-brand-teal transition-colors" href="#typography">Typography</a>
+                    <a class="text-xs font-semibold tracking-widest uppercase hover:text-brand-teal transition-colors" href="#colors">Colors</a>
+                    <a class="text-xs font-semibold tracking-widest uppercase hidden md:block hover:text-brand-teal transition-colors" href="#components">Components</a>
+                </div>
+                
+                <div class="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 group cursor-pointer z-10">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-magenta to-brand-teal flex items-center justify-center group-hover:rotate-180 transition-transform duration-700">
+                        <iconify-icon class="text-white text-lg" icon="solar:dna-linear"></iconify-icon>
+                    </div>
+                    <span class="font-bold tracking-tighter text-xl gradient-text">BIOCELL</span>
+                </div>
+                
+                <div class="flex items-center gap-6 z-10">
+                    <a class="text-xs font-semibold tracking-widest uppercase hidden md:block hover:text-brand-teal transition-colors" href="#layout">Layout</a>
+                    <a class="text-xs font-semibold tracking-widest uppercase hover:text-brand-teal transition-colors" href="#motion">Motion</a>
+                    <a class="px-4 py-2 bg-clinical-dark text-white text-xs font-bold uppercase tracking-widest rounded-full hover:bg-brand-magenta transition-colors" href="#">Docs</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- 0) Hero / Above the fold -->
+        <section class="relative z-10 grid grid-cols-1 md:grid-cols-12 border-b border-clinical-grey/60 min-h-[700px] overflow-hidden">
+            
+            <!-- Main Content Area -->
+            <div class="col-span-1 md:col-span-9 border-b md:border-b-0 md:border-r border-clinical-grey/60 relative group flex items-end">
+                <!-- Background Image & Gradient -->
+                <div class="absolute inset-0 z-0 overflow-hidden">
+                    <img class="w-full h-full object-cover opacity-80 mix-blend-luminosity scale-105 group-hover:scale-110 transition-transform duration-[10s]" src="https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=2000&auto=format&fit=crop" alt="Biotech Lab" />
+                    <!-- Enhanced Glassmorphism layer -->
+                    <div class="absolute inset-0 bg-white/40 backdrop-blur-2xl"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-clinical-light via-clinical-light/40 to-transparent"></div>
+                </div>
+
+                <!-- Text Reveal Header -->
+                <div class="relative z-20 p-8 md:p-16 w-full">
+                    <div class="mb-6 flex items-center gap-4 reveal delay-100">
+                        <span class="px-4 py-1.5 bg-brand-teal/10 border border-brand-teal/20 text-brand-teal rounded-full text-xs font-mono uppercase font-bold flex items-center gap-2">
+                            <span class="w-2 h-2 bg-brand-teal rounded-full animate-pulse"></span>
+                            Biotechnology
+                        </span>
+                        <span class="text-xs font-mono text-clinical-slate/60 uppercase tracking-widest">DS v1.0.0</span>
+                    </div>
+
+                    <h1 class="text-6xl md:text-8xl lg:text-[10rem] font-bold tracking-tighter leading-[0.85] text-clinical-dark mb-6" id="hero-title">
+                        <span class="text-reveal-wrapper"><span class="text-reveal-content delay-200">Clinical</span></span><br/>
+                        <span class="text-reveal-wrapper"><span class="text-reveal-content delay-300 text-brand-teal">System</span></span>
+                    </h1>
+
+                    <p class="max-w-xl text-lg md:text-xl text-clinical-slate/70 leading-relaxed reveal delay-500 font-medium">
+                        A precision-engineered design system for modern pharmaceutical and biotechnology products. Clean, accessible, and dynamic.
+                    </p>
+
+                    <div class="mt-10 flex gap-4 reveal delay-500">
+                        <!-- Shimmer Beam Button -->
+                        <button class="group relative z-10 flex items-center justify-center overflow-hidden rounded-full p-[1px] leading-none">
+                            <span class="absolute inset-[-1000%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_0deg,transparent_0_340deg,#11A397_360deg)]"></span>
+                            <span class="relative flex h-full w-full items-center rounded-full bg-clinical-dark px-8 py-4 ring-1 ring-white/10 hover:bg-black transition-colors">
+                                <span class="absolute inset-0 overflow-hidden rounded-full">
+                                    <span class="absolute top-0 left-0 h-full w-full -skew-x-12 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:animate-shimmer group-hover:opacity-100"></span>
+                                </span>
+                                <span class="relative z-10 flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white">
+                                    Get Started <iconify-icon icon="solar:arrow-right-linear" class="text-lg"></iconify-icon>
+                                </span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats/Extra Sidebar -->
+            <div class="col-span-1 md:col-span-3 grid grid-rows-3 h-full min-h-[400px]">
+                <div class="row-span-1 border-b border-clinical-grey/60 p-8 flex flex-col justify-center reveal delay-300 hover:bg-white transition-colors cursor-pointer group">
+                    <iconify-icon class="text-4xl text-brand-magenta mb-4 group-hover:scale-110 transition-transform" icon="solar:test-tube-bold-duotone"></iconify-icon>
+                    <h2 class="text-4xl font-bold tracking-tighter text-clinical-dark">04</h2>
+                    <span class="text-xs font-mono text-clinical-slate/60 mt-1 uppercase tracking-widest font-bold">Brand Colors</span>
+                </div>
+                <div class="row-span-1 border-b border-clinical-grey/60 p-8 flex flex-col justify-center reveal delay-500 hover:bg-white transition-colors cursor-pointer group">
+                    <iconify-icon class="text-4xl text-brand-teal mb-4 group-hover:scale-110 transition-transform" icon="solar:layers-bold-duotone"></iconify-icon>
+                    <h2 class="text-4xl font-bold tracking-tighter text-clinical-dark">24+</h2>
+                    <span class="text-xs font-mono text-clinical-slate/60 mt-1 uppercase tracking-widest font-bold">Components</span>
+                </div>
+                <div class="row-span-1 p-8 flex flex-col justify-center reveal delay-700 hover:bg-white transition-colors cursor-pointer group relative overflow-hidden">
+                    <iconify-icon class="text-4xl text-product-red mb-4 group-hover:scale-110 transition-transform" icon="solar:shield-check-bold-duotone"></iconify-icon>
+                    <h2 class="text-4xl font-bold tracking-tighter text-clinical-dark">AAA</h2>
+                    <span class="text-xs font-mono text-clinical-slate/60 mt-1 uppercase tracking-widest font-bold">Accessibility</span>
+                    
+                    <iconify-icon class="absolute -right-4 -bottom-4 text-8xl text-brand-teal/5 animate-spin-slow" icon="solar:medical-kit-bold"></iconify-icon>
+                </div>
+            </div>
+        </section>
+
+        <!-- 1) Typography -->
+        <section id="typography" class="relative z-10 border-b border-clinical-grey/60 bg-white">
+            <div class="p-8 md:p-16 border-b border-clinical-grey/60 bg-clinical-offwhite/50 backdrop-blur-md">
+                <span class="text-xs font-mono font-bold uppercase text-brand-magenta tracking-widest block mb-3">01 / Foundation</span>
+                <h2 class="text-5xl font-bold tracking-tight text-clinical-dark">Typography</h2>
+                <p class="mt-4 text-clinical-slate/70 max-w-2xl text-lg">Using <strong>Fira Sans</strong> as the primary typeface for its legibility and structural clarity, essential for medical and scientific data. JetBrains Mono is used for tabular data and code.</p>
+            </div>
+
+            <div class="grid grid-cols-1 divide-y divide-clinical-grey/60">
+                <!-- H1 -->
+                <div class="grid grid-cols-1 md:grid-cols-12 p-8 md:p-12 items-baseline hover:bg-clinical-offwhite transition-colors">
+                    <div class="col-span-3 text-xs font-mono font-bold text-clinical-slate/50 uppercase tracking-widest mb-4 md:mb-0">H1 / Display</div>
+                    <div class="col-span-7">
+                        <h1 class="text-6xl md:text-7xl font-bold tracking-tighter text-clinical-dark">Clinical Trials</h1>
+                    </div>
+                    <div class="col-span-2 text-right text-xs font-mono text-clinical-slate/50">72px / 1.0</div>
+                </div>
+                <!-- H2 -->
+                <div class="grid grid-cols-1 md:grid-cols-12 p-8 md:p-12 items-baseline hover:bg-clinical-offwhite transition-colors">
+                    <div class="col-span-3 text-xs font-mono font-bold text-clinical-slate/50 uppercase tracking-widest mb-4 md:mb-0">H2 / Section</div>
+                    <div class="col-span-7">
+                        <h2 class="text-4xl md:text-5xl font-semibold tracking-tight text-clinical-dark">Molecular Structure</h2>
+                    </div>
+                    <div class="col-span-2 text-right text-xs font-mono text-clinical-slate/50">48px / 1.1</div>
+                </div>
+                <!-- H3 -->
+                <div class="grid grid-cols-1 md:grid-cols-12 p-8 md:p-12 items-baseline hover:bg-clinical-offwhite transition-colors">
+                    <div class="col-span-3 text-xs font-mono font-bold text-clinical-slate/50 uppercase tracking-widest mb-4 md:mb-0">H3 / Subtitle</div>
+                    <div class="col-span-7">
+                        <h3 class="text-2xl md:text-3xl font-medium tracking-tight text-clinical-dark">Patient Data Analytics</h3>
+                    </div>
+                    <div class="col-span-2 text-right text-xs font-mono text-clinical-slate/50">30px / 1.2</div>
+                </div>
+                <!-- Body Lg -->
+                <div class="grid grid-cols-1 md:grid-cols-12 p-8 md:p-12 items-baseline hover:bg-clinical-offwhite transition-colors">
+                    <div class="col-span-3 text-xs font-mono font-bold text-clinical-slate/50 uppercase tracking-widest mb-4 md:mb-0">Body / Large</div>
+                    <div class="col-span-7">
+                        <p class="text-lg leading-relaxed text-clinical-slate/80">
+                            Our biotechnology platform leverages advanced sequencing to identify targeted therapies, improving patient outcomes globally.
+                        </p>
+                    </div>
+                    <div class="col-span-2 text-right text-xs font-mono text-clinical-slate/50">18px / 1.6</div>
+                </div>
+                <!-- Body -->
+                <div class="grid grid-cols-1 md:grid-cols-12 p-8 md:p-12 items-baseline hover:bg-clinical-offwhite transition-colors">
+                    <div class="col-span-3 text-xs font-mono font-bold text-clinical-slate/50 uppercase tracking-widest mb-4 md:mb-0">Body / Base</div>
+                    <div class="col-span-7">
+                        <p class="text-base leading-relaxed text-clinical-slate/70">
+                            Comprehensive documentation detailing the API endpoints and integration protocols for laboratory equipment.
+                        </p>
+                    </div>
+                    <div class="col-span-2 text-right text-xs font-mono text-clinical-slate/50">16px / 1.5</div>
+                </div>
+                <!-- Caption/Label -->
+                <div class="grid grid-cols-1 md:grid-cols-12 p-8 md:p-12 items-baseline hover:bg-clinical-offwhite transition-colors">
+                    <div class="col-span-3 text-xs font-mono font-bold text-clinical-slate/50 uppercase tracking-widest mb-4 md:mb-0">Caption / Label</div>
+                    <div class="col-span-7">
+                        <span class="text-xs font-bold uppercase tracking-widest text-brand-teal">
+                            Status: Verified and Active
+                        </span>
+                    </div>
+                    <div class="col-span-2 text-right text-xs font-mono text-clinical-slate/50">12px / Widest</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2) Colors -->
+        <section id="colors" class="relative z-10 border-b border-clinical-grey/60">
+            <div class="p-8 md:p-16 border-b border-clinical-grey/60 bg-clinical-offwhite/50 backdrop-blur-md">
+                <span class="text-xs font-mono font-bold uppercase text-brand-magenta tracking-widest block mb-3">02 / Foundation</span>
+                <h2 class="text-5xl font-bold tracking-tight text-clinical-dark">Color System</h2>
+                <p class="mt-4 text-clinical-slate/70 max-w-2xl text-lg">A modern clinical palette designed for high contrast and clear data visualization. Incorporating brand and product core values.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 border-b border-clinical-grey/60">
+                <!-- Brand Magenta -->
+                <div class="col-span-1 border-b sm:border-b-0 md:border-r border-clinical-grey/60 bg-[#BB3087] group aspect-square flex flex-col justify-between p-8 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                    <div class="relative z-10 text-white font-bold text-xl">Magenta</div>
+                    <div class="relative z-10 font-mono text-xs text-white/80 uppercase font-bold">#BB3087<br/>Brand Primary</div>
+                </div>
+                <!-- Brand Teal -->
+                <div class="col-span-1 border-b sm:border-b-0 md:border-r border-clinical-grey/60 bg-[#11A397] group aspect-square flex flex-col justify-between p-8 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                    <div class="relative z-10 text-white font-bold text-xl">Teal</div>
+                    <div class="relative z-10 font-mono text-xs text-white/80 uppercase font-bold">#11A397<br/>Brand Secondary</div>
+                </div>
+                <!-- Product Red -->
+                <div class="col-span-1 border-b sm:border-b-0 md:border-r border-clinical-grey/60 bg-[#C66772] group aspect-square flex flex-col justify-between p-8 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                    <div class="relative z-10 text-white font-bold text-xl">Soft Red</div>
+                    <div class="relative z-10 font-mono text-xs text-white/80 uppercase font-bold">#C66772<br/>Product Accent</div>
+                </div>
+                <!-- Product Green -->
+                <div class="col-span-1 bg-[#257962] group aspect-square flex flex-col justify-between p-8 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                    <div class="relative z-10 text-white font-bold text-xl">Dark Green</div>
+                    <div class="relative z-10 font-mono text-xs text-white/80 uppercase font-bold">#257962<br/>Product Success</div>
+                </div>
+            </div>
+
+            <!-- Neutrals -->
+            <div class="grid grid-cols-2 md:grid-cols-4">
+                <div class="col-span-1 border-r border-b border-clinical-grey/60 bg-white p-8 h-40 flex flex-col justify-between">
+                    <div class="text-clinical-dark font-bold">White</div>
+                    <div class="font-mono text-xs text-clinical-slate/50">#FFFFFF / bg-white</div>
+                </div>
+                <div class="col-span-1 border-r border-b border-clinical-grey/60 bg-[#F8F9FA] p-8 h-40 flex flex-col justify-between">
+                    <div class="text-clinical-dark font-bold">Off-White</div>
+                    <div class="font-mono text-xs text-clinical-slate/50">#F8F9FA / bg-offwhite</div>
+                </div>
+                <div class="col-span-1 border-r border-b border-clinical-grey/60 bg-[#E9ECEF] p-8 h-40 flex flex-col justify-between">
+                    <div class="text-clinical-dark font-bold">Grey</div>
+                    <div class="font-mono text-xs text-clinical-slate/50">#E9ECEF / bg-grey</div>
+                </div>
+                <div class="col-span-1 border-b border-clinical-grey/60 bg-[#212529] p-8 h-40 flex flex-col justify-between">
+                    <div class="text-white font-bold">Dark</div>
+                    <div class="font-mono text-xs text-clinical-slate/50">#212529 / bg-dark</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3) UI Components -->
+        <section id="components" class="relative z-10 border-b border-clinical-grey/60">
+            <div class="p-8 md:p-16 border-b border-clinical-grey/60 bg-clinical-offwhite/50 backdrop-blur-md">
+                <span class="text-xs font-mono font-bold uppercase text-brand-magenta tracking-widest block mb-3">03 / UI Elements</span>
+                <h2 class="text-5xl font-bold tracking-tight text-clinical-dark">Components</h2>
+                <p class="mt-4 text-clinical-slate/70 max-w-2xl text-lg">Interactive elements combining deep clinical aesthetics with fluid micro-interactions and flashlight effects.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-clinical-grey/60">
+                
+                <!-- Buttons & Inputs -->
+                <div class="p-8 md:p-16">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-clinical-slate mb-8">Buttons & Inputs</h3>
+                    
+                    <div class="space-y-10">
+                        <!-- Solid Button -->
+                        <div class="flex items-center gap-6">
+                            <button class="btn-shine px-8 py-3.5 bg-brand-teal text-white rounded-md text-sm font-bold uppercase tracking-widest hover:shadow-xl hover:shadow-brand-teal/30 hover:-translate-y-1 transition-all flex items-center gap-2 group">
+                                Primary Action
+                                <iconify-icon class="text-xl group-hover:translate-x-1 group-hover:scale-110 transition-transform" icon="solar:arrow-right-linear"></iconify-icon>
+                            </button>
+                            <span class="text-xs font-mono text-clinical-slate/50">Solid / Shine</span>
+                        </div>
+
+                        <!-- Outline Button -->
+                        <div class="flex items-center gap-6">
+                            <button class="btn-outline-anim px-8 py-3.5 border-2 border-brand-magenta text-brand-magenta hover:text-white rounded-md text-sm font-bold uppercase tracking-widest transition-all flex items-center gap-2">
+                                Secondary Outline
+                            </button>
+                            <span class="text-xs font-mono text-clinical-slate/50">Outline / Fill</span>
+                        </div>
+
+                        <!-- Input Field -->
+                        <div>
+                            <label class="block text-xs font-bold text-clinical-slate uppercase tracking-wider mb-2">Patient ID</label>
+                            <div class="relative max-w-sm group">
+                                <iconify-icon icon="solar:user-id-linear" class="absolute left-4 top-1/2 -translate-y-1/2 text-clinical-slate/50 text-lg group-focus-within:text-brand-teal transition-colors"></iconify-icon>
+                                <input type="text" placeholder="Enter ID..." class="w-full bg-white border border-clinical-grey/80 rounded-md py-3 pl-12 pr-4 text-clinical-dark placeholder:text-clinical-slate/40 outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal transition-all shadow-sm" />
+                            </div>
+                        </div>
+
+                        <!-- Custom Checkbox -->
+                        <div class="flex items-center gap-3 mt-4">
+                            <label class="flex items-center gap-3 cursor-pointer relative group">
+                                <input type="checkbox" class="sr-only peer" />
+                                <div class="checkbox-box w-6 h-6 border-2 border-clinical-slate/30 rounded flex items-center justify-center bg-white transition-all peer-focus:ring-2 peer-focus:ring-brand-teal/30">
+                                    <svg class="w-4 h-4 text-white transform scale-0 transition-transform opacity-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <span class="text-sm font-medium text-clinical-slate select-none group-hover:text-clinical-dark transition-colors">Enable Data Sync</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cards & Badges -->
+                <div class="p-8 md:p-16 bg-white relative">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-clinical-slate mb-8">Cards & Badges</h3>
+
+                    <!-- Flashlight Card -->
+                    <div class="flashlight-card border border-clinical-grey/60 rounded-xl p-8 shadow-sm hover:shadow-xl transition-shadow duration-500 max-w-sm cursor-pointer group" onmousemove="const rect = this.getBoundingClientRect(); this.style.setProperty('--mouse-x', `${event.clientX - rect.left}px`); this.style.setProperty('--mouse-y', `${event.clientY - rect.top}px`);">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 bg-clinical-offwhite rounded-lg flex items-center justify-center border border-clinical-grey/60 group-hover:bg-brand-teal/5 group-hover:border-brand-teal/20 transition-colors">
+                                <iconify-icon class="text-2xl text-brand-teal" icon="solar:dna-bold-duotone"></iconify-icon>
+                            </div>
+                            <!-- Pulse Badge -->
+                            <span class="px-3 py-1 bg-product-green/10 text-product-green border border-product-green/20 rounded-full text-xs font-mono font-bold flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 bg-product-green rounded-full animate-pulse"></span> Active
+                            </span>
+                        </div>
+                        <h4 class="text-xl font-bold text-clinical-dark mb-2">Genomic Sequencing</h4>
+                        <p class="text-sm text-clinical-slate/70 leading-relaxed mb-6">Automated processing pipeline for full genomic data sets.</p>
+                        <div class="w-full bg-clinical-offwhite h-1.5 rounded-full overflow-hidden">
+                            <div class="bg-gradient-to-r from-brand-teal to-brand-magenta w-[65%] h-full rounded-full"></div>
+                        </div>
+                        <div class="mt-2 text-right text-xs font-mono text-clinical-slate/50">65% Complete</div>
+                    </div>
+
+                    <!-- Informational Badge -->
+                    <div class="mt-10 flex gap-4">
+                        <span class="px-4 py-2 bg-clinical-dark text-white rounded-md text-xs font-bold uppercase tracking-widest shadow-lg shadow-clinical-dark/20">
+                            v2.1 Beta
+                        </span>
+                        <span class="px-4 py-2 bg-white border border-clinical-grey/80 text-clinical-slate rounded-md text-xs font-bold uppercase tracking-widest shadow-sm">
+                            Lab Only
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 4) Glassmorphism -->
+        <section id="glassmorphism" class="relative z-10 border-b border-clinical-grey/60 bg-white">
+            <div class="p-8 md:p-16 border-b border-clinical-grey/60 bg-clinical-offwhite/50 backdrop-blur-md">
+                <span class="text-xs font-mono font-bold uppercase text-brand-magenta tracking-widest block mb-3">04 / Visual Style</span>
+                <h2 class="text-5xl font-bold tracking-tight text-clinical-dark">Glassmorphism</h2>
+                <p class="mt-4 text-clinical-slate/70 max-w-2xl text-lg">Rules and application of frosted glass effects. Essential for maintaining depth and legibility over complex laboratory backgrounds or dense data.</p>
+            </div>
+            
+            <div class="p-8 md:p-16 grid grid-cols-1 lg:grid-cols-3 gap-12 bg-[#EAEAE5] relative overflow-hidden">
+                <!-- Decorative background elements to show off glass -->
+                <div class="absolute top-10 left-10 w-64 h-64 bg-brand-magenta/30 rounded-full blur-3xl"></div>
+                <div class="absolute bottom-10 right-10 w-64 h-64 bg-brand-teal/30 rounded-full blur-3xl"></div>
+
+                <div class="col-span-1 lg:col-span-2 relative z-10 space-y-8">
+                    <!-- Glass Panel Light -->
+                    <div class="bg-white/40 backdrop-blur-xl border border-white/60 p-8 rounded-2xl shadow-xl shadow-clinical-dark/5">
+                        <h3 class="text-xl font-bold text-clinical-dark mb-2">Primary Glass Panel</h3>
+                        <p class="text-clinical-slate/70 mb-4 text-sm">Used for main content cards floating above imagery or dense backgrounds.</p>
+                        <div class="font-mono text-xs text-clinical-slate bg-white/50 p-4 rounded border border-white/40">
+                            bg-white/40 backdrop-blur-xl border border-white/60
+                        </div>
+                    </div>
+
+                    <!-- Glass Panel Dark -->
+                    <div class="bg-clinical-dark/60 backdrop-blur-xl border border-white/10 p-8 rounded-2xl shadow-xl shadow-black/20 text-white">
+                        <h3 class="text-xl font-bold mb-2">Dark Glass Panel</h3>
+                        <p class="text-white/70 mb-4 text-sm">Used for tooltips, modals, or focused data overlays.</p>
+                        <div class="font-mono text-xs text-white/70 bg-black/30 p-4 rounded border border-white/10">
+                            bg-clinical-dark/60 backdrop-blur-xl border border-white/10
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-span-1 relative z-10 flex flex-col gap-6">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-clinical-slate border-b border-clinical-grey/60 pb-2">Glass Rules</h3>
+                    <ul class="space-y-4 text-sm text-clinical-slate/80">
+                        <li class="flex gap-3"><iconify-icon icon="solar:check-circle-bold" class="text-brand-teal text-lg"></iconify-icon> <strong>Use Sparingly:</strong> Apply only to elevate primary content over busy backgrounds.</li>
+                        <li class="flex gap-3"><iconify-icon icon="solar:check-circle-bold" class="text-brand-teal text-lg"></iconify-icon> <strong>High Contrast:</strong> Ensure text contrast meets AAA standards even through the blur.</li>
+                        <li class="flex gap-3"><iconify-icon icon="solar:check-circle-bold" class="text-brand-teal text-lg"></iconify-icon> <strong>Borders:</strong> Always use a subtle border (e.g., white/60) to define the glass edge.</li>
+                        <li class="flex gap-3"><iconify-icon icon="solar:close-circle-bold" class="text-product-red text-lg"></iconify-icon> <strong>Don't Stack:</strong> Avoid stacking multiple glass layers, it degrades performance.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5) Data & Charts (Dosage vs Weight) -->
+        <section id="charts" class="relative z-10 border-b border-clinical-grey/60 bg-white">
+            <div class="p-8 md:p-16 border-b border-clinical-grey/60 bg-clinical-offwhite/50 backdrop-blur-md">
+                <span class="text-xs font-mono font-bold uppercase text-brand-magenta tracking-widest block mb-3">05 / Data Visualization</span>
+                <h2 class="text-5xl font-bold tracking-tight text-clinical-dark">Charts & Dosage Data</h2>
+                <p class="mt-4 text-clinical-slate/70 max-w-2xl text-lg">Standards for displaying critical medical data. Example: Liquid medicine prescription dosage based on patient weight.</p>
+            </div>
+
+            <div class="p-8 md:p-16 grid grid-cols-1 lg:grid-cols-12 gap-12">
+                <div class="lg:col-span-4 flex flex-col gap-6">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-clinical-slate border-b border-clinical-grey/60 pb-2">Visualization Rules</h3>
+                    <ul class="space-y-4 text-sm text-clinical-slate/80">
+                        <li class="flex gap-3"><iconify-icon icon="solar:chart-square-bold" class="text-brand-teal text-lg flex-shrink-0"></iconify-icon> <span><strong>Brand Colors for Data:</strong> Use Brand Teal for safe/primary data, and Product Red for critical limits.</span></li>
+                        <li class="flex gap-3"><iconify-icon icon="solar:chart-square-bold" class="text-brand-teal text-lg flex-shrink-0"></iconify-icon> <span><strong>Grid Lines:</strong> Keep grid lines subtle (opacity 10-20%) to avoid cluttering the view.</span></li>
+                        <li class="flex gap-3"><iconify-icon icon="solar:chart-square-bold" class="text-brand-teal text-lg flex-shrink-0"></iconify-icon> <span><strong>Interactive Tooltips:</strong> Provide exact values on hover for precise dosage reading.</span></li>
+                    </ul>
+
+                    <div class="bg-clinical-offwhite p-6 rounded-xl border border-clinical-grey/60 mt-4">
+                        <h4 class="font-bold text-clinical-dark mb-2">Current Context</h4>
+                        <p class="text-xs text-clinical-slate/70">Liquid Medicine XYZ-200. Dosage factor: 0.5ml per kg of body weight. Max dosage limit at 50ml.</p>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-8">
+                    <!-- SVG Chart -->
+                    <div class="w-full bg-white border border-clinical-grey/60 rounded-2xl shadow-sm p-8 relative group">
+                        <div class="flex justify-between items-center mb-8">
+                            <div>
+                                <h3 class="text-xl font-bold text-clinical-dark">Dosage by Patient Weight</h3>
+                                <span class="text-xs font-mono text-clinical-slate/50 uppercase">Protocol XYZ-200</span>
+                            </div>
+                            <button class="px-4 py-2 bg-clinical-offwhite text-clinical-slate hover:bg-brand-teal hover:text-white transition-colors rounded-md text-xs font-bold uppercase">Export Data</button>
+                        </div>
+                        
+                        <!-- Chart Area -->
+                        <div class="relative h-64 w-full border-l-2 border-b-2 border-clinical-grey/60">
+                            <!-- Y-Axis Labels (Dosage ml) -->
+                            <div class="absolute -left-8 bottom-0 h-full flex flex-col justify-between text-xs font-mono text-clinical-slate/50 pb-6 pt-2">
+                                <span>60</span>
+                                <span>40</span>
+                                <span>20</span>
+                                <span>0</span>
+                            </div>
+                            
+                            <!-- X-Axis Labels (Weight kg) -->
+                            <div class="absolute -bottom-8 left-0 w-full flex justify-between text-xs font-mono text-clinical-slate/50 px-2">
+                                <span>0kg</span>
+                                <span>40kg</span>
+                                <span>80kg</span>
+                                <span>120kg</span>
+                            </div>
+
+                            <!-- Grid Lines -->
+                            <div class="absolute inset-0 flex flex-col justify-between pt-2 pb-6">
+                                <div class="w-full border-b border-clinical-grey/30"></div>
+                                <div class="w-full border-b border-clinical-grey/30"></div>
+                                <div class="w-full border-b border-clinical-grey/30"></div>
+                                <div class="w-full border-b border-transparent"></div>
+                            </div>
+
+                            <!-- Danger Zone Area (above 50ml) -->
+                            <div class="absolute top-0 left-0 w-full h-[16.6%] bg-product-red/5 border-b border-product-red/20"></div>
+
+                            <!-- Line Graph (SVG) -->
+                            <svg class="absolute inset-0 w-full h-full pb-6 pt-2 overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 100">
+                                <path d="M 0 100 L 33.3 66.6 L 66.6 33.3 L 100 0" fill="none" stroke="#11A397" stroke-width="2" class="dash-anim" />
+                                
+                                <!-- Points -->
+                                <circle cx="33.3" cy="66.6" r="2" fill="#fff" stroke="#11A397" stroke-width="1" class="cursor-pointer hover:r-4 transition-all" />
+                                <circle cx="66.6" cy="33.3" r="2" fill="#fff" stroke="#11A397" stroke-width="1" class="cursor-pointer hover:r-4 transition-all" />
+                                <circle cx="83.3" cy="16.6" r="2" fill="#fff" stroke="#C66772" stroke-width="1" class="cursor-pointer hover:r-4 transition-all" /> <!-- Max Dosage Point -->
+                            </svg>
+                            
+                            <style>
+                                .dash-anim {
+                                    stroke-dasharray: 200;
+                                    stroke-dashoffset: 200;
+                                    animation: drawLine 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+                                    animation-delay: 0.5s;
+                                }
+                                @keyframes drawLine {
+                                    to { stroke-dashoffset: 0; }
+                                }
+                            </style>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6) Icons & Animations -->
+        <section id="motion" class="relative z-10 border-b border-clinical-grey/60 overflow-hidden bg-clinical-dark text-white">
+            <!-- Background element -->
+            <div class="absolute inset-0 opacity-10" style="background-size: 40px 40px; background-image: linear-gradient(to right, rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,1) 1px, transparent 1px);"></div>
+
+            <div class="p-8 md:p-16 border-b border-white/10 relative z-10">
+                <span class="text-xs font-mono font-bold uppercase text-brand-teal tracking-widest block mb-3">06 / Assets & Motion</span>
+                <h2 class="text-5xl font-bold tracking-tight">Iconography & Motion</h2>
+            </div>
+
+            <!-- Marquee -->
+            <div class="py-12 border-b border-white/10 relative z-10 bg-black/20">
+                <div class="text-center text-xs font-mono text-white/40 mb-6">Infinite Loop Integration</div>
+                <div class="marquee-container">
+                    <div class="marquee-content items-center gap-16">
+                        <span class="text-sm font-mono font-bold uppercase tracking-widest text-brand-teal">Clinical System</span>
+                        <iconify-icon icon="solar:star-fall-linear" class="text-xl text-white/30"></iconify-icon>
+                        <span class="text-sm font-mono font-bold uppercase tracking-widest text-white/60">Biotech Standard</span>
+                        <iconify-icon icon="solar:atom-linear" class="text-xl text-white/30"></iconify-icon>
+                        <span class="text-sm font-mono font-bold uppercase tracking-widest text-product-red">High Fidelity</span>
+                        <iconify-icon icon="solar:shield-check-linear" class="text-xl text-white/30"></iconify-icon>
+                        <span class="text-sm font-mono font-bold uppercase tracking-widest text-white/60">Data Driven</span>
+                        <iconify-icon icon="solar:database-linear" class="text-xl text-white/30"></iconify-icon>
+                    </div>
+                    <!-- Duplicate for seamless loop -->
+                    <div class="marquee-content items-center gap-16">
+                        <span class="text-sm font-mono font-bold uppercase tracking-widest text-brand-teal">Clinical System</span>
+                        <iconify-icon icon="solar:star-fall-linear" class="text-xl text-white/30"></iconify-icon>
+                        <span class="text-sm font-mono font-bold uppercase tracking-widest text-white/60">Biotech Standard</span>
+                        <iconify-icon icon="solar:atom-linear" class="text-xl text-white/30"></iconify-icon>
+                        <span class="text-sm font-mono font-bold uppercase tracking-widest text-product-red">High Fidelity</span>
+                        <iconify-icon icon="solar:shield-check-linear" class="text-xl text-white/30"></iconify-icon>
+                        <span class="text-sm font-mono font-bold uppercase tracking-widest text-white/60">Data Driven</span>
+                        <iconify-icon icon="solar:database-linear" class="text-xl text-white/30"></iconify-icon>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Icons Grid -->
+            <div class="p-8 md:p-16 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 justify-items-center relative z-10">
+                <div class="flex flex-col items-center gap-3 group reveal">
+                    <div class="w-16 h-16 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-brand-teal group-hover:border-brand-teal transition-all duration-300">
+                        <iconify-icon class="text-3xl text-white" icon="solar:dna-linear"></iconify-icon>
+                    </div>
+                    <span class="text-xs font-mono text-white/50 group-hover:text-white transition-colors">dna</span>
+                </div>
+                <div class="flex flex-col items-center gap-3 group reveal delay-100">
+                    <div class="w-16 h-16 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-brand-magenta group-hover:border-brand-magenta transition-all duration-300">
+                        <iconify-icon class="text-3xl text-white" icon="solar:test-tube-linear"></iconify-icon>
+                    </div>
+                    <span class="text-xs font-mono text-white/50 group-hover:text-white transition-colors">lab</span>
+                </div>
+                <div class="flex flex-col items-center gap-3 group reveal delay-200">
+                    <div class="w-16 h-16 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-product-green group-hover:border-product-green transition-all duration-300">
+                        <iconify-icon class="text-3xl text-white" icon="solar:heart-pulse-linear"></iconify-icon>
+                    </div>
+                    <span class="text-xs font-mono text-white/50 group-hover:text-white transition-colors">vitals</span>
+                </div>
+                <div class="flex flex-col items-center gap-3 group reveal delay-300">
+                    <div class="w-16 h-16 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-product-red group-hover:border-product-red transition-all duration-300">
+                        <iconify-icon class="text-3xl text-white" icon="solar:bacteria-linear"></iconify-icon>
+                    </div>
+                    <span class="text-xs font-mono text-white/50 group-hover:text-white transition-colors">micro</span>
+                </div>
+                <div class="flex flex-col items-center gap-3 group reveal delay-300">
+                    <div class="w-16 h-16 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-brand-teal group-hover:border-brand-teal transition-all duration-300">
+                        <iconify-icon class="text-3xl text-white" icon="solar:medical-kit-linear"></iconify-icon>
+                    </div>
+                    <span class="text-xs font-mono text-white/50 group-hover:text-white transition-colors">clinical</span>
+                </div>
+                <div class="flex flex-col items-center gap-3 group reveal delay-500">
+                    <div class="w-16 h-16 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-clinical-dark transition-all duration-300 text-white">
+                        <iconify-icon class="text-3xl" icon="solar:document-medicine-linear"></iconify-icon>
+                    </div>
+                    <span class="text-xs font-mono text-white/50 group-hover:text-white transition-colors">records</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="relative z-10 bg-white border-t border-clinical-grey/60 text-clinical-slate py-12 text-center flex flex-col items-center justify-center">
+            <iconify-icon class="text-3xl text-brand-teal mb-4" icon="solar:atom-bold-duotone"></iconify-icon>
+            <span class="text-xs font-mono uppercase font-bold tracking-widest text-clinical-slate/60">Biocell Design System v1.0 &copy; 2026</span>
+        </footer>
+
+    </div>
+
+    <!-- Initialization Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Header load animation
+            setTimeout(() => {
+                document.querySelector('header').classList.add('loaded');
+            }, 100);
+
+            // Hero Text Reveal activation
+            setTimeout(() => {
+                const heroTitle = document.getElementById('hero-title');
+                if (heroTitle) heroTitle.classList.add('reveal-active');
+            }, 400);
+
+            // Scroll Observer for .reveal elements
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+</html>
